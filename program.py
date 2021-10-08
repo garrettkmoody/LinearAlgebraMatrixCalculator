@@ -25,14 +25,13 @@ def buildLayout(rows,cols):
     ]
     # For now will only show the name of the file that was chosen
     image_viewer_column = [
-        [sg.Text("Fill in the matrix")],
-        [sg.Button("Click this Trash", size=(25, 1), pad=(0, 0))]
+        [sg.Text("Fill in the matrix")]
     ]
 
 
     for i in matrix:
         image_viewer_column.append(i)
-
+    image_viewer_column.append([sg.Button("SOLVE", size=(25, 1), pad=(0, 3))])
     return [
         [
             sg.Column(file_list_column, size = (colWidth,colHeight)),
@@ -49,7 +48,7 @@ while True:
     event, values = window.read()
     if event == "Exit" or event == sg.WIN_CLOSED:
         break
-    elif event == "Click this Trash":
+    elif event == "SOLVE":
         print("really bruh")
     elif event == "OK":
 
