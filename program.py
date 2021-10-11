@@ -1,16 +1,12 @@
 # img_viewer.py
 
 import PySimpleGUI as sg
+from sympy import *
 
+rows = 3
+cols = 3
 
 def buildLayout(rows,cols):
-    matrix = []
-
-    for _ in range(rows):
-        temp = []
-        for _ in range(cols):
-            temp.append(sg.InputText(size = (3,0)))
-        matrix.append(list(temp))
 
     colWidth = 200
     colHeight = 300
@@ -29,16 +25,45 @@ def buildLayout(rows,cols):
     ]
 
 
-    for i in matrix:
-        image_viewer_column.append(i)
-    image_viewer_column.append([sg.Button("SOLVE", size=(25, 1), pad=(0, 3))])
+    for _ in range(rows):
+        temp = []
+        for _ in range(cols):
+            temp.append(sg.InputText(size = (3,0)))
+        image_viewer_column.append(list(temp))
+
+    image_viewer_column.append([sg.Button("SOLVE",size=(25, 1), pad=(0, 3))])
+    count = 0
+    for _ in range(rows):
+        temp = []
+        for _ in range(cols):
+            temp.append(sg.InputText(size = (3,0), key = str(count)))
+            count += 1
+        image_viewer_column.append(list(temp))
+
     return [
         [
             sg.Column(file_list_column, size = (colWidth,colHeight)),
             sg.VSeperator(),
-            sg.Column(image_viewer_column, element_justification='l', size = (colWidth,colHeight)),
+            sg.Column(image_viewer_column, element_justification='c', size = (colWidth,colHeight)),
         ]
     ]
+
+def solve(rows,cols,values):
+    print(values)
+    matrix = []
+    temp = []
+    for i in range(rows * cols):
+        temp.append(int(values[i + 3]))
+        if len(temp) == cols:
+            matrix.append(list(temp))
+            temp = []
+    convertedMat = Matrix(matrix)
+    convertedMat = convertedMat.rref()
+
+
+    for i in range(len(list(convertedMat[0]))):
+        window[str(i)].update(list(convertedMat[0])[i])
+
 # First the window layout in 2 columns
 sg.theme("DarkAmber")
 
@@ -49,10 +74,11 @@ while True:
     if event == "Exit" or event == sg.WIN_CLOSED:
         break
     elif event == "SOLVE":
-        print("really bruh")
+        solve(rows,cols,values)
     elif event == "OK":
-
 
         window.close()
         window = sg.Window("Garrett's Linear Algebra Calculator",buildLayout(int(values[0]),int(values[1])))
+        rows = int(values[0])
+        cols = int(values[1])
     print(values)
